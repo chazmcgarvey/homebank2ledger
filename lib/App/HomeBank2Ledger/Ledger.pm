@@ -22,7 +22,7 @@ Here is a specification for the substructures:
 This is a fully-qualified account name. Names may contain colons for representing a hierarchy of
 accounts. Examples:
 
-=for: list
+=for :list
 * "Assets:Bank:Chase1234"
 * "Liabilities:Credit Card:CapitalOne"
 
