@@ -1,0 +1,70 @@
+NAME
+
+    App::HomeBank2Ledger - A tool to convert HomeBank files to Ledger
+    format
+
+VERSION
+
+    version 0.001
+
+SYNOPSIS
+
+        App::HomeBank2Ledger->main(@args);
+
+DESCRIPTION
+
+    This module is part of the homebank2ledger script.
+
+METHODS
+
+ main
+
+        App::HomeBank2Ledger->main(@args);
+
+    Run the script and exit; does not return.
+
+ formatter
+
+        $formatter = $app->formatter($homebank, $opts);
+
+    Generate a App::HomeBank2Ledger::Formatter.
+
+ convert_homebank_to_ledger
+
+        my $ledger = $app->convert_homebank_to_ledger($homebank, $opts);
+
+    Converts a File::HomeBank to a App::HomeBank2Ledger::Ledger.
+
+ print_to_file
+
+        $app->print_to_file($str);
+        $app->print_to_file($str, $filepath);
+
+    Print a string to a file (or STDOUT).
+
+ parse_args
+
+        $opts = $app->parse_args(@args);
+
+    Parse command-line arguments.
+
+BUGS
+
+    Please report any bugs or feature requests on the bugtracker website
+    https://github.com/chazmcgarvey/homebank2ledger/issues
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
+
+AUTHOR
+
+    Charles McGarvey <chazmcgarvey@brokenzipper.com>
+
+COPYRIGHT AND LICENSE
+
+    This software is Copyright (c) 2019 by Charles McGarvey.
+
+    This is free software, licensed under:
+
+      The MIT (X11) License
+
