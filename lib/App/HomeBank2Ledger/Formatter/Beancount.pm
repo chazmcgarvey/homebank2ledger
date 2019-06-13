@@ -14,7 +14,7 @@ L<App::HomeBank2Ledger::Formatter>
 use warnings;
 use strict;
 
-use App::HomeBank2Ledger::Util qw(commify);
+use App::HomeBank2Ledger::Util qw(commify rtrim);
 
 use parent 'App::HomeBank2Ledger::Formatter';
 
@@ -24,6 +24,9 @@ my %STATUS_SYMBOLS = (
     cleared => '*',
     pending => '!',
 );
+my $UNKNOWN_DATE = '0001-01-01';
+
+sub _croak { require Carp; Carp::croak(@_) }
 
 sub format {
     my $self   = shift;
@@ -38,7 +41,7 @@ sub format {
         $self->_format_transactions($ledger),
     );
 
-    return join($/, @out);
+    return join($/, map { rtrim($_) } @out);
 }
 
 sub _format_header {
@@ -46,12 +49,12 @@ sub _format_header {
 
     my @out;
 
-    my $file = $self->file;
-    push @out, "; Converted from $file using homebank2ledger ${VERSION}";
-
     if (my $name = $self->name) {
         push @out, "; Name: $name";
     }
+
+    my $file = $self->file;
+    push @out, "; Converted from ${file} using homebank2ledger ${VERSION}";
 
     push @out, '';
 
@@ -65,8 +68,11 @@ sub _format_accounts {
     my @out;
 
     for my $account (sort @{$ledger->accounts}) {
-        $account = $self->_munge_account($account);
-        push @out, "1970-01-01 open $account";  # TODO pick better date?
+        my $oldest_transaction = $self->_find_oldest_transaction_by_account($account, $ledger);
+        my $account_date = $oldest_transaction->{date} || $UNKNOWN_DATE;
+        $account = $self->_format_account($account);
+
+        push @out, "${account_date} open ${account}";
     }
     push @out, '';
 
@@ -80,8 +86,11 @@ sub _format_commodities {
     my @out;
 
     for my $commodity (@{$ledger->commodities}) {
-        push @out, "1970-01-01 commodity $commodity->{iso}";    # TODO
-        push @out, "    name: \"$commodity->{name}\"" if $commodity->{name};
+        my $oldest_transaction = $self->_find_oldest_transaction_by_commodity($commodity, $ledger);
+        my $commodity_date = $oldest_transaction->{date} || $UNKNOWN_DATE;
+
+        push @out, "${commodity_date} commodity $commodity->{iso}";
+        push @out, '    name: '.$self->_format_string($commodity->{name}) if $commodity->{name};
     }
 
     push @out, '';
@@ -110,8 +119,8 @@ sub _format_transaction {
 
     my $date        = $transaction->{date};
     my $status      = $transaction->{status};
-    my $payee       = $transaction->{payee} || 'No Payee TODO';
-    my $memo        = $transaction->{memo} || '';
+    my $payee       = $transaction->{payee} || '';
+    my $memo        = $transaction->{memo}  || '';
     my @postings    = @{$transaction->{postings}};
 
     my @out;
@@ -123,17 +132,18 @@ sub _format_transaction {
         if (keys(%posting_statuses) == 1) {
             my ($status) = keys %posting_statuses;
             $status_symbol = $STATUS_SYMBOLS{$status || 'none'} || '';
-            $status_symbol .= ' ' if $status_symbol;
         }
     }
 
-    my $symbol = $status_symbol ? "${status_symbol} " : '';
-    push @out, "${date} ${symbol}\"${payee}\" \"$memo\"";   # TODO handle proper quoting
-    $out[-1] =~ s/\h+$//;
+    push @out, sprintf('%s%s%s%s', $date,
+        $status_symbol    && ' '.$status_symbol || ' *',   # status (or "txn") is required
+        ($payee || $memo) && ' '.$self->_format_string($payee),
+        $memo             && ' '.$self->_format_string($memo),
+    );
 
     if (my %tags = map { $_ => 1 } map { @{$_->{tags} || []} } @postings) {
         my @tags = map { "#$_" } keys %tags;
-        $out[-1] .= "  ".join(' ', @tags);
+        $out[-1] .= ' '.join(' ', @tags);
     }
 
     for my $posting (@postings) {
@@ -144,7 +154,7 @@ sub _format_transaction {
             $posting_status_symbol = $STATUS_SYMBOLS{$posting->{status} || ''} || '';
         }
 
-        my $account = $self->_munge_account($posting->{account});
+        my $account = $self->_format_account($posting->{account});
 
         push @line, ($posting_status_symbol ? "  $posting_status_symbol " : '    ');
         push @line, sprintf("\%-${account_width}s", $account);
@@ -152,11 +162,6 @@ sub _format_transaction {
         push @line, $self->_format_amount($posting->{amount}, $posting->{commodity}) if defined $posting->{amount};
 
         push @out, join('', @line);
-        $out[-1] =~ s/\h+$//;
-
-        # if (my $payee = $posting->{payee}) {
-        #     push @out, "      ; Payee: $payee";
-        # }
     }
 
     push @out, '';
@@ -164,12 +169,26 @@ sub _format_transaction {
     return @out;
 }
 
+sub _format_account {
+    my $self = shift;
+    my $account = shift;
+    $account =~ s/[^A-Za-z0-9:]+/-/g;
+    $account =~ s/-+/-/g;
+    $account =~ s/(?:^|(?<=:))([a-z])/uc($1)/eg;
+    return $account;
+}
+
+sub _format_string {
+    my $self = shift;
+    my $str  = shift;
+    $str =~ s/"/\\"/g;
+    return "\"$str\"";
+}
+
 sub _format_amount {
     my $self      = shift;
     my $amount    = shift;
-    my $commodity = shift;
-
-    # _croak 'Must provide a valid currency' if !$commodity;
+    my $commodity = shift or _croak 'Must provide a valid currency';
 
     my $format = "\% .$commodity->{frac}f";
     my ($whole, $fraction) = split(/\./, sprintf($format, $amount));
@@ -182,13 +201,55 @@ sub _format_amount {
     return $num;
 }
 
-sub _munge_account {
-    my $self = shift;
+sub _find_oldest_transaction_by_account {
+    my $self    = shift;
     my $account = shift;
-    $account =~ s/[^A-Za-z0-9:]+/-/g;
-    $account =~ s/-+/-/g;
-    $account =~ s/(?:^|(?<=:))([a-z])/uc($1)/eg;
-    return $account;
+    my $ledger  = shift;
+
+    $account = $self->_format_account($account);
+
+    my $oldest = $self->{oldest_transaction_by_account};
+    if (!$oldest) {
+        # build index
+        for my $transaction (@{$ledger->transactions}) {
+            for my $posting (@{$transaction->{postings}}) {
+                my $account = $self->_format_account($posting->{account});
+
+                if ($transaction->{date} lt ($oldest->{$account}{date} || '9999-99-99')) {
+                    $oldest->{$account} = $transaction;
+                }
+            }
+        }
+
+        $self->{oldest_transaction_by_account} = $oldest;
+    }
+
+    return $oldest->{$account};
+}
+
+sub _find_oldest_transaction_by_commodity {
+    my $self      = shift;
+    my $commodity = shift;
+    my $ledger    = shift;
+
+    my $oldest = $self->{oldest_transaction_by_commodity};
+    if (!$oldest) {
+        # build index
+        for my $transaction (@{$ledger->transactions}) {
+            for my $posting (@{$transaction->{postings}}) {
+                my $symbol = $posting->{commodity}{symbol};
+                next if !$symbol;
+
+                if ($transaction->{date} lt ($oldest->{$symbol}{date} || '9999-99-99')) {
+                    $oldest->{$symbol} = $transaction;
+                }
+            }
+        }
+
+        $self->{oldest_transaction_by_commodity} = $oldest;
+    }
+
+    return $oldest->{$commodity->{symbol}};
 }
 
 1;

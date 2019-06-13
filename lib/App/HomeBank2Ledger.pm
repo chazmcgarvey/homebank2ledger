@@ -11,13 +11,6 @@ This module is part of the L<homebank2ledger> script.
 
 =cut
 
-# TODO - add posting memo
-# TODO - transaction description ("narration" in beancount)
-# TODO - payees
-# TODO - budget/scheduled
-# TODO - consolidate tags on transaction
-# TODO - consolidate payees on transaction
-
 use warnings FATAL => 'all';    # temp fatal all
 use strict;
 
@@ -198,7 +191,7 @@ sub convert_homebank_to_ledger {
     }
 
     if ($has_initial_balance) {
-        # transactions are sorted, so the first transaction is the earliest
+        # transactions are sorted, so the first transaction is the oldest
         my $first_date = $opts->{opening_date} || $transactions->[0]{date};
         if ($first_date !~ /^\d{4}-\d{2}-\d{2}$/) {
             die "Opening date must be in the form YYYY-MM-DD.\n";
@@ -313,7 +306,7 @@ sub convert_homebank_to_ledger {
                 commodity   => $commodities{$account->{currency}},
                 amount      => -$transaction->{amount},
                 payee       => $payee->{name},
-                memo        => '',  # TODO
+                memo        => $memo,
                 status      => $status,
                 tags        => $tags,
             };
@@ -328,7 +321,8 @@ sub convert_homebank_to_ledger {
 
         $ledger->add_transactions({
             date        => $transaction->{date},
-            payee       => 'Payee TODO',
+            payee       => $payee->{name},
+            memo        => $memo,
             postings    => \@postings,
         });
     }

@@ -14,7 +14,7 @@ L<App::HomeBank2Ledger::Formatter>
 use warnings;
 use strict;
 
-use App::HomeBank2Ledger::Util qw(commify);
+use App::HomeBank2Ledger::Util qw(commify rtrim);
 
 use parent 'App::HomeBank2Ledger::Formatter';
 
@@ -24,6 +24,8 @@ my %STATUS_SYMBOLS = (
     cleared => '*',
     pending => '!',
 );
+
+sub _croak { require Carp; Carp::croak(@_) }
 
 sub format {
     my $self   = shift;
@@ -38,7 +40,7 @@ sub format {
         $self->_format_transactions($ledger),
     );
 
-    return join($/, @out);
+    return join($/, map { rtrim($_) } @out);
 }
 
 sub _format_header {
@@ -46,12 +48,12 @@ sub _format_header {
 
     my @out;
 
-    my $file = $self->file;
-    push @out, "; Converted from $file using homebank2ledger ${VERSION}";
-
     if (my $name = $self->name) {
         push @out, "; Name: $name";
     }
+
+    my $file = $self->file;
+    push @out, "; Converted from ${file} using homebank2ledger ${VERSION}";
 
     push @out, '';
 
@@ -133,8 +135,8 @@ sub _format_transaction {
 
     my $date        = $transaction->{date};
     my $status      = $transaction->{status};
-    my $payee       = $transaction->{payee} || 'No Payee TODO';
-    my $memo        = $transaction->{memo} || '';
+    my $payee       = $self->_format_string($transaction->{payee} || '');
+    my $memo        = $self->_format_string($transaction->{memo}  || '');
     my @postings    = @{$transaction->{postings}};
 
     my @out;
@@ -146,13 +148,16 @@ sub _format_transaction {
         if (keys(%posting_statuses) == 1) {
             my ($status) = keys %posting_statuses;
             $status_symbol = $STATUS_SYMBOLS{$status || 'none'} || '';
-            $status_symbol .= ' ' if $status_symbol;
         }
     }
 
-    my $symbol = $status_symbol ? "${status_symbol} " : '';
-    push @out, "${date} ${symbol}${payee}  ; $memo";
-    $out[-1] =~ s/\h+$//;
+    $payee =~ s/(?:  )|\t;/ ;/g;    # don't turn into a memo
+
+    push @out, sprintf('%s%s%s%s', $date,
+        $status_symbol && " ${status_symbol}",
+        $payee         && " $payee",
+        $memo          && "  ; $memo",
+    );
 
     for my $posting (@postings) {
         my @line;
@@ -168,10 +173,9 @@ sub _format_transaction {
         push @line, $self->_format_amount($posting->{amount}, $posting->{commodity}) if defined $posting->{amount};
 
         push @out, join('', @line);
-        $out[-1] =~ s/\h+$//;
 
         if (my $payee = $posting->{payee}) {
-            push @out, "      ; Payee: $payee";
+            push @out, '      ; Payee: '.$self->_format_string($payee);
         }
 
         if (my @tags = @{$posting->{tags} || []}) {
@@ -184,12 +188,17 @@ sub _format_transaction {
     return @out;
 }
 
+sub _format_string {
+    my $self = shift;
+    my $str  = shift;
+    $str =~ s/\v//g;
+    return $str;
+}
+
 sub _format_amount {
     my $self      = shift;
     my $amount    = shift;
-    my $commodity = shift;
-
-    # _croak 'Must provide a valid currency' if !$commodity;
+    my $commodity = shift or _croak 'Must provide a valid currency';
 
     my $format = "\% .$commodity->{frac}f";
     my ($whole, $fraction) = split(/\./, sprintf($format, $amount));

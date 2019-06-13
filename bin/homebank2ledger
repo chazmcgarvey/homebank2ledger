@@ -32,9 +32,9 @@ converts from, so there won't be any crazy data loss bugs... but no warranty.
 * Retains HomeBank metadata, including payees and tags.
 * Offers some customization of the output ledger, like account renaming.
 
-There aren't really any features I think this program is missing -- actually it may have too many
-features -- but if there is anything you think this program could do to be even better, feedback is
-welcome; just file a bug report. Or fork the code and have fun!
+This program is feature-complete in my opinion (well, almost -- see L</CAVEATS>), but if there is
+anything you think it could do to be even better, feedback is welcome; just file a bug report. Or
+fork the code and have fun!
 
 =head2 Use cases
 
@@ -199,6 +199,13 @@ it's just plain text.
 
     # Run the balances report:
     bean-report ledger.beancount balances
+
+=head1 CAVEATS
+
+=for :list
+* I didn't intend to make this a releasable robust product, so it's lacking tests.
+* Budgets and scheduled transactions are not (yet) converted.
+* There are some minor formatting tweaks I will make (e.g. consolidate transaction tags and payees)
 
 =cut
 
