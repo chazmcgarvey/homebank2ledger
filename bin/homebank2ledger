@@ -18,12 +18,14 @@ C<homebank2ledger> converts L<HomeBank|http://homebank.free.fr/> files to a form
 L<Ledger|https://www.ledger-cli.org/>. It can also convert directly to the similar
 L<Beancount|http://furius.ca/beancount/> format.
 
-This software is B<EXPERIMENTAL>. I wrote it because I have been maintaining my own personal
-finances using HomeBank (which is awesome) and I wanted to investigate using plain text accounting
-programs which have great support for commodities. It works well enough for my data, but you may be
-using HomeBank features that I don't so there may be cases this doesn't handle well or at all. Feel
-free to file a bug report. This script does NOT try to modify the original HomeBank files it
-converts from, so there won't be any crazy data loss bugs... but no warranty.
+This software is B<EXPERIMENTAL>, in early development. Its interface may change without notice.
+
+I wrote C<homebank2ledger> because I have been maintaining my own personal finances using HomeBank
+(which is awesome) and I wanted to investigate using plain text accounting programs. It works well
+enough for my data, but you may be using HomeBank features that I don't so there may be cases this
+doesn't handle well or at all. Feel free to file a bug report. This script does NOT try to modify
+the original HomeBank files it converts from, so there won't be any crazy data loss bugs... but no
+warranty.
 
 =head2 Features
 
