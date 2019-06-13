@@ -1,0 +1,24 @@
+
+# Please follow these code style guidelines. You can use this file to
+# automatically configure your editor.
+# For instructions, see: http://editorconfig.org/
+
+[*]
+charset                     = utf8
+end_of_line                 = lf
+insert_final_newline        = true
+trim_trailing_whitespace    = true
+
+[{**.pl,**.pm,**.pod,**.t,bin/homebank2ledger}]
+indent_style    = space
+indent_size     = 4
+max_line_length = 100
+
+[{.editorconfig,**.ini}]
+indent_style    = space
+indent_size     = 4
+
+[{**.xhb,**.xml}]
+indent_style    = space
+indent_size     = 2
+

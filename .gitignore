@@ -1,0 +1,14 @@
+*#
+*.bs
+*.o
+*.tar*
+*~
+/.build
+/.perl-version
+/MYMETA.*
+/blib
+/cover_db
+/homebank2ledger-*
+/local*
+/pm_to_blib
+/tmp
