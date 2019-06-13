@@ -30,14 +30,12 @@ use App::HomeBank2Ledger::Util qw(commify);
 use Exporter qw(import);
 use Scalar::Util qw(refaddr);
 use Time::Piece;
+use XML::Entities;
 use XML::Parser::Lite;
 
 our $VERSION = '9999.999'; # VERSION
 
 our @EXPORT_OK = qw(parse_string parse_file);
-
-sub _croak { require Carp; Carp::croak(@_) }
-sub _usage { _croak("Usage: @_\n") }
 
 my %ACCOUNT_TYPES = (
     0   => 'none',
@@ -103,6 +101,9 @@ my %TRANSACTION_PAYMODES = (
     10  => 'fee',
     11  => 'directdebit',
 );
+
+sub _croak { require Carp; Carp::croak(@_) }
+sub _usage { _croak("Usage: @_\n") }
 
 =method new
 
@@ -415,7 +416,7 @@ sub find_transaction_transfer_pair {
 
     $transations = $homebank->sorted_transactions;
 
-Get an arrayref of transactions sorted by date (earliest first).
+Get an arrayref of transactions sorted by date (oldest first).
 
 =cut
 
@@ -532,6 +533,12 @@ sub parse_string {
                 shift;
                 my $node = shift;
                 my %attr = @_;
+
+                # decode all attribute values
+                for my $key (keys %attr) {
+                    $attr{$key} = _decode_xml_entities($attr{$key});
+                }
+
                 if ($node eq 'properties') {
                     $attr{currency} = delete $attr{curr} if $attr{curr};
                     %properties = %attr;
@@ -601,6 +608,14 @@ sub parse_string {
         currencies      => \@currencies,
         transactions    => \@transactions,
     };
+}
+
+sub _decode_xml_entities {
+    my $str = shift;
+    # decoding entities can be extremely slow, so don't bother if it doesn't look like there are any
+    # entities to decode
+    return $str if $str !~ /&(?:#\d+)|[A-Za-z0-9]+;/;
+    return XML::Entities::decode('all', $str);
 }
 
 sub _rdn_to_unix_epoch {
