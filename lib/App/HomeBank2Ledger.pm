@@ -11,7 +11,7 @@ use File::HomeBank;
 use Getopt::Long 2.38 qw(GetOptionsFromArray);
 use Pod::Usage;
 
-our $VERSION = '0.002'; # VERSION
+our $VERSION = '0.003'; # VERSION
 
 my %ACCOUNT_TYPES = (   # map HomeBank account types to Ledger accounts
     bank        => 'Assets:Bank',
@@ -49,6 +49,10 @@ sub main {
     }
     if ($opts->{manual}) {
         pod2usage(-exitval => 0, -verbose => 2);
+    }
+    if (!$opts->{input}) {
+        print STDERR "Input file is required.\n";
+        exit(1);
     }
 
     my $homebank = File::HomeBank->new(file => $opts->{input});
@@ -355,10 +359,6 @@ sub parse_args {
     ) or pod2usage(-exitval => 1, -verbose => 99, -sections => [qw(SYNOPSIS OPTIONS)]);
 
     $opts{input} = shift @args if !$opts{input};
-    if (!$opts{input}) {
-        print STDERR "Input file is required.\n";
-        exit(1);
-    }
 
     return \%opts;
 }
@@ -382,7 +382,7 @@ App::HomeBank2Ledger - A tool to convert HomeBank files to Ledger format
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 

@@ -8,7 +8,7 @@ use strict;
 
 use App::HomeBank2Ledger;
 
-our $VERSION = '0.002'; # VERSION
+our $VERSION = '0.003'; # VERSION
 
 App::HomeBank2Ledger->main(@ARGV);
 
@@ -24,7 +24,7 @@ homebank2ledger - A tool to convert HomeBank files to Ledger format
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
