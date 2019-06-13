@@ -1,8 +1,12 @@
-#! perl
-# ABSTRACT: A tool to convert HomeBank files to Ledger format
-# PODNAME: homebank2ledger
+# NAME
 
-=head1 SYNOPSIS
+homebank2ledger - A tool to convert HomeBank files to Ledger format
+
+# VERSION
+
+version 0.001
+
+# SYNOPSIS
 
     homebank2ledger --input FILEPATH [--output FILEPATH] [--format FORMAT]
                     [--version|--help|--manual] [--account-width NUM]
@@ -11,33 +15,32 @@
                     [--opening-date DATE] [--default-account STR]
                     [--rename-account STR]... [--exclude-account STR]...
 
-=head1 DESCRIPTION
+# DESCRIPTION
 
-C<homebank2ledger> converts L<HomeBank|http://homebank.free.fr/> files to a format usable by
-L<Ledger|https://www.ledger-cli.org/>. It can also convert directly to the similar
-L<Beancount|http://furius.ca/beancount/> format.
+`homebank2ledger` converts [HomeBank](http://homebank.free.fr/) files to a format usable by
+[Ledger](https://www.ledger-cli.org/). It can also convert directly to the similar
+[Beancount](http://furius.ca/beancount/) format.
 
-This software is B<EXPERIMENTAL>, in early development. Its interface may change without notice.
+This software is **EXPERIMENTAL**, in early development. Its interface may change without notice.
 
-I wrote C<homebank2ledger> because I have been maintaining my own personal finances using HomeBank
+I wrote `homebank2ledger` because I have been maintaining my own personal finances using HomeBank
 (which is awesome) and I wanted to investigate using plain text accounting programs. It works well
 enough for my data, but you may be using HomeBank features that I don't so there may be cases this
 doesn't handle well or at all. Feel free to file a bug report. This script does NOT try to modify
 the original HomeBank files it converts from, so there won't be any crazy data loss bugs... but no
 warranty.
 
-=head2 Features
+## Features
 
-=for :list
-* Converts HomeBank accounts and categories into a typical set of double-entry accounts.
-* Retains HomeBank metadata, including payees and tags.
-* Offers some customization of the output ledger, like account renaming.
+- Converts HomeBank accounts and categories into a typical set of double-entry accounts.
+- Retains HomeBank metadata, including payees and tags.
+- Offers some customization of the output ledger, like account renaming.
 
-This program is feature-complete in my opinion (well, almost -- see L</CAVEATS>), but if there is
+This program is feature-complete in my opinion (well, almost -- see ["CAVEATS"](#caveats)), but if there is
 anything you think it could do to be even better, feedback is welcome; just file a bug report. Or
 fork the code and have fun!
 
-=head2 Use cases
+## Use cases
 
 You can migrate the data you have in HomeBank so you can start maintaining your accounts in Ledger
 (or Beancount).
@@ -45,118 +48,116 @@ You can migrate the data you have in HomeBank so you can start maintaining your 
 Or if you don't plan to switch completely off of HomeBank, you can continue to maintain your
 accounts in HomeBank and use this script to also take advantage of the reports Ledger offers.
 
-=head1 OPTIONS
+# OPTIONS
 
-=head2 --version
+## --version
 
 Print the version and exit.
 
-Alias: C<-V>
+Alias: `-V`
 
-=head2 --help
+## --help
 
 Print help/usage info and exit.
 
-Alias: C<-h>, C<-?>
+Alias: `-h`, `-?`
 
-=head2 --manual
+## --manual
 
 Print the full manual and exit.
 
-Alias: C<--man>
+Alias: `--man`
 
-=head2 --input FILEPATH
+## --input FILEPATH
 
 Specify the path to the HomeBank file to read (must already exist).
 
-Alias: C<--file>, C<-i>
+Alias: `--file`, `-i`
 
-=head2 --output FILEPATH
+## --output FILEPATH
 
 Specify the path to the Ledger file to write (may not exist yet). If not provided, the formatted
-ledger will be printed on C<STDOUT>.
+ledger will be printed on `STDOUT`.
 
-Alias: C<-o>
+Alias: `-o`
 
-=head2 --format STR
+## --format STR
 
 Specify the output file format. If provided, must be one of:
 
-=for :list
-* ledger
-* beancount
+- ledger
+- beancount
 
-=head2 --account-width NUM
+## --account-width NUM
 
 Specify the number of characters to reserve for the account column in transactions. Adjusting this
 can provide prettier formatting of the output.
 
 Defaults to 40.
 
-=head2 --accounts
+## --accounts
 
 Enables account declarations.
 
-Defaults to enabled; use C<--no-accounts> to disable.
+Defaults to enabled; use `--no-accounts` to disable.
 
-=head2 --payees
+## --payees
 
 Enables payee declarations.
 
-Defaults to enabled; use C<--no-payees> to disable.
+Defaults to enabled; use `--no-payees` to disable.
 
-=head2 --tags
+## --tags
 
 Enables tag declarations.
 
-Defaults to enabled; use C<--no-tags> to disable.
+Defaults to enabled; use `--no-tags` to disable.
 
-=head2 --commodities
+## --commodities
 
 Enables commodity declarations.
 
-Defaults to enabled; use C<--no-commodities> to disable.
+Defaults to enabled; use `--no-commodities` to disable.
 
-=head2 --opening-date DATE
+## --opening-date DATE
 
 Specify the opening date for the "opening balances" transaction. This transaction is created (if
 needed) to support HomeBank's ability to configure accounts with opening balances.
 
 Date must be in the form "YYYY-MM-DD". Defaults to the date of the first transaction.
 
-=head2 --default-account STR
+## --default-account STR
 
 Specify the account to use for one-sided transactions (if any). Defaults to "Expenses:No Category".
 
 A default account may be necessary because with Ledger all transactions are double-entry.
 
-=head2 --rename-account STR
+## --rename-account STR
 
-Specifies a mapping for renaming accounts in the output. By default C<homebank2ledger> tries to come
+Specifies a mapping for renaming accounts in the output. By default `homebank2ledger` tries to come
 up with sensible account names (based on your HomeBank accounts and categories) that fit into five
 root accounts:
 
-=for :list
-* Assets
-* Liabilities
-* Equity
-* Income
-* Expenses
+- Assets
+- Liabilities
+- Equity
+- Income
+- Expenses
 
-The value of the argument must be of the form "REGEXP=REPLACEMENT". See L</EXAMPLES>.
+The value of the argument must be of the form "REGEXP=REPLACEMENT". See ["EXAMPLES"](#examples).
 
 Can be repeated to rename multiple accounts.
 
-=head2 --exclude-account STR
+## --exclude-account STR
 
 Specifies an account that will not be included in the output. All transactions related to this
 account will be skipped.
 
 Can be repeated to exclude multiple accounts.
 
-=head1 EXAMPLES
+# EXAMPLES
 
-=head2 Basic usage
+## Basic usage
 
     # Convert homebank.xhb to a Ledger-compatible file:
     homebank2ledger path/to/homebank.xhb -o ledger.dat
@@ -168,9 +169,9 @@ You can also combine this into one command:
 
     homebank2ledger path/to/homebank.xhb | ledger -f - balance
 
-=head2 Account renaming
+## Account renaming
 
-With the L</"--rename-account STR"> argument, you have some control over the resulting account
+With the ["--rename-account STR"](#rename-account-str) argument, you have some control over the resulting account
 structure. This may be useful in cases where the organization imposed (or encouraged) by HomeBank
 doesn't necessarily line up with an ideal double-entry structure.
 
@@ -193,7 +194,7 @@ You can also merge accounts by simple renaming multiple accounts to the same nam
 If you need to do anything more complicated, of course you can edit the output after converting;
 it's just plain text.
 
-=head2 Beancount
+## Beancount
 
     # Convert homebank.xhb to a Beancount-compatible file:
     homebank2ledger path/to/homebank.xhb -f beancount -o ledger.beancount
@@ -201,20 +202,29 @@ it's just plain text.
     # Run the balances report:
     bean-report ledger.beancount balances
 
-=head1 CAVEATS
+# CAVEATS
 
-=for :list
-* I didn't intend to make this a releasable robust product, so it's lacking tests.
-* Budgets and scheduled transactions are not (yet) converted.
-* There are some minor formatting tweaks I will make (e.g. consolidate transaction tags and payees)
+- I didn't intend to make this a releasable robust product, so it's lacking tests.
+- Budgets and scheduled transactions are not (yet) converted.
+- There are some minor formatting tweaks I will make (e.g. consolidate transaction tags and payees)
 
-=cut
+# BUGS
 
-use warnings;
-use strict;
+Please report any bugs or feature requests on the bugtracker website
+[https://github.com/chazmcgarvey/homebank2ledger/issues](https://github.com/chazmcgarvey/homebank2ledger/issues)
 
-use App::HomeBank2Ledger;
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
-our $VERSION = '9999.999'; # VERSION
+# AUTHOR
 
-App::HomeBank2Ledger->main(@ARGV);
+Charles McGarvey <chazmcgarvey@brokenzipper.com>
+
+# COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2019 by Charles McGarvey.
+
+This is free software, licensed under:
+
+    The MIT (X11) License
