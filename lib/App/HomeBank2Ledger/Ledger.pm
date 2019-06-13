@@ -5,7 +5,7 @@ package App::HomeBank2Ledger::Ledger;
 use warnings;
 use strict;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 
 sub new {
@@ -63,7 +63,7 @@ App::HomeBank2Ledger::Ledger - Ledger data representation
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
@@ -86,59 +86,17 @@ Here is a specification for the substructures:
 This is a fully-qualified account name. Names may contain colons for representing a hierarchy of
 accounts. Examples:
 
-=head1 ATTRIBUTES
+=over 4
 
-=head2 accounts
+=item *
 
-Get an arrayref of accounts.
+"Assets:Bank:Chase1234"
 
-=head2 commodities
+=item *
 
-Get an arrayref of commodities.
+"Liabilities:Credit Card:CapitalOne"
 
-=head2 payees
-
-Get an arrayref of payees.
-
-=head2 tags
-
-Get an arrayref of tags.
-
-=head2 transactions
-
-Get an arrayref of transactions.
-
-=head1 METHODS
-
-=head2 new
-
-    $ledger = App::HomeBank2Ledger::Ledger->new(%ledger_data);
-
-Construct a new ledger instance.
-
-=head2 add_accounts
-
-Add accounts.
-
-=head2 add_commodities
-
-Add commodities.
-
-=head2 add_payees
-
-Add payees.
-
-=head2 add_tags
-
-Add tags.
-
-=head2 add_transactions
-
-Add transactions.
-
-=for: list
-* "Assets:Bank:Chase1234"
-* "Liabilities:Credit Card:CapitalOne"
+=back
 
 =head2 commodity
 
@@ -190,6 +148,56 @@ This is a hashref like this:
             ...
         ],
     }
+
+=head1 ATTRIBUTES
+
+=head2 accounts
+
+Get an arrayref of accounts.
+
+=head2 commodities
+
+Get an arrayref of commodities.
+
+=head2 payees
+
+Get an arrayref of payees.
+
+=head2 tags
+
+Get an arrayref of tags.
+
+=head2 transactions
+
+Get an arrayref of transactions.
+
+=head1 METHODS
+
+=head2 new
+
+    $ledger = App::HomeBank2Ledger::Ledger->new(%ledger_data);
+
+Construct a new ledger instance.
+
+=head2 add_accounts
+
+Add accounts.
+
+=head2 add_commodities
+
+Add commodities.
+
+=head2 add_payees
+
+Add payees.
+
+=head2 add_tags
+
+Add tags.
+
+=head2 add_transactions
+
+Add transactions.
 
 =head1 BUGS
 

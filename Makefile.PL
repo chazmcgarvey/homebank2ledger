@@ -12,13 +12,13 @@ my %WriteMakefileArgs = (
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0
   },
-  "DISTNAME" => "homebank2ledger",
+  "DISTNAME" => "App-HomeBank2Ledger",
   "EXE_FILES" => [
     "bin/homebank2ledger"
   ],
   "LICENSE" => "mit",
   "MIN_PERL_VERSION" => "5.006",
-  "NAME" => "homebank2ledger",
+  "NAME" => "App::HomeBank2Ledger",
   "PREREQ_PM" => {
     "Carp" => 0,
     "Exporter" => 0,
@@ -41,7 +41,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
     "TESTS" => "t/*.t"
   }
