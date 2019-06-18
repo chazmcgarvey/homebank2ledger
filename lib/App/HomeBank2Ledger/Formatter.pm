@@ -70,7 +70,7 @@ This must be overridden by subclasses.
 =cut
 
 sub format {
-    ...
+    die "Unimplemented\n";
 }
 
 =attr type
