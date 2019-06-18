@@ -4,7 +4,7 @@ homebank2ledger - A tool to convert HomeBank files to Ledger format
 
 # VERSION
 
-version 0.003
+version 0.004
 
 # SYNOPSIS
 
@@ -12,7 +12,7 @@ version 0.003
                     [--version|--help|--manual] [--account-width NUM]
                     [--accounts|--no-accounts] [--payees|--no-payees]
                     [--tags|--no-tags] [--commodities|--no-commodities]
-                    [--opening-date DATE] [--default-account STR]
+                    [--opening-date DATE]
                     [--rename-account STR]... [--exclude-account STR]...
 
 # DESCRIPTION
@@ -125,12 +125,6 @@ Specify the opening date for the "opening balances" transaction. This transactio
 needed) to support HomeBank's ability to configure accounts with opening balances.
 
 Date must be in the form "YYYY-MM-DD". Defaults to the date of the first transaction.
-
-## --default-account STR
-
-Specify the account to use for one-sided transactions (if any). Defaults to "Expenses:No Category".
-
-A default account may be necessary because with Ledger all transactions are double-entry.
 
 ## --rename-account STR
 
