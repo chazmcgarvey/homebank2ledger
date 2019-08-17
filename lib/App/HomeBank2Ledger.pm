@@ -11,7 +11,7 @@ This module is part of the L<homebank2ledger> script.
 
 =cut
 
-use warnings FATAL => 'all';    # temp fatal all
+use warnings;
 use strict;
 
 use App::HomeBank2Ledger::Formatter;
