@@ -162,7 +162,8 @@ sub convert_homebank_to_ledger {
     if ($opts->{accounts}) {
         my @accounts = map { $_->{ledger_name} } grep { !$_->{excluded} } @$accounts, @$categories;
 
-        push @accounts, $default_account_income, $default_account_expenses;
+        push @accounts, $default_account_income   if !grep { $_ eq $default_account_income   } @accounts;
+        push @accounts, $default_account_expenses if !grep { $_ eq $default_account_expenses } @accounts;
         push @accounts, $OPENING_BALANCES_ACCOUNT if $has_initial_balance;
 
         $ledger->add_accounts(@accounts);
