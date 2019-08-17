@@ -269,6 +269,13 @@ sub _format_string {
     return $str;
 }
 
+sub _quote_string {
+    my $self = shift;
+    my $str  = shift;
+    $str =~ s/"/\\"/g;
+    return "\"$str\"";
+}
+
 sub _format_amount {
     my $self      = shift;
     my $amount    = shift;
@@ -279,7 +286,10 @@ sub _format_amount {
 
     my $num = join($commodity->{dchar}, commify($whole, $commodity->{gchar}), $fraction);
 
-    $num = $commodity->{syprf} ? "$commodity->{symbol} $num" : "$num $commodity->{symbol}";
+    my $symbol = $commodity->{symbol};
+    $symbol = $self->_quote_string($symbol) if $symbol =~ /[0-9\s]/;
+
+    $num = $commodity->{syprf} ? "$symbol $num" : "$num $symbol";
 
     return $num;
 }
