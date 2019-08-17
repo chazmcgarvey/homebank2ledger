@@ -247,12 +247,13 @@ sub _format_transaction {
 
         push @out, join('', @line);
 
-        if (my $payee = $posting->{payee}) {
-            push @out, '      ; Payee: '.$self->_format_string($payee);
+        if (my $posting_payee = $posting->{payee}) {
+            $posting_payee = $self->_format_string($posting_payee);
+            push @out, "      ; Payee: $posting_payee" if $posting_payee ne $payee;
         }
 
         if (my @tags = @{$posting->{tags} || []}) {
-            push @out, "      ; :".join(':', @tags).":";
+            push @out, '      ; :'.join(':', @tags).':';
         }
     }
 

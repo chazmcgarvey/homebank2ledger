@@ -303,7 +303,7 @@ sub convert_homebank_to_ledger {
             amount      => $amount,
             commodity   => $commodities{$account->{currency}},
             payee       => $payee->{name},
-            memo        => $memo,
+            note        => $memo,
             status      => $status,
             tags        => $tags,
         };
@@ -332,7 +332,7 @@ sub convert_homebank_to_ledger {
                 amount      => $paired_transaction->{amount} || -$transaction->{amount},
                 commodity   => $commodities{$dst_account->{currency}},
                 payee       => $paired_payee->{name},
-                memo        => $paired_transaction->{wording} || '',
+                note        => $paired_transaction->{wording} || '',
                 status      => $STATUS_SYMBOLS{$paired_transaction->{status} || ''} || $status,
                 tags        => _split_tags($paired_transaction->{tags}),
             };
@@ -355,7 +355,7 @@ sub convert_homebank_to_ledger {
                     commodity   => $commodities{$account->{currency}},
                     amount      => $amount,
                     payee       => $payee->{name},
-                    memo        => $memo,
+                    note        => $memo,
                     status      => $status,
                     tags        => $tags,
                 };
@@ -373,7 +373,7 @@ sub convert_homebank_to_ledger {
                 commodity   => $commodities{$account->{currency}},
                 amount      => $amount,
                 payee       => $payee->{name},
-                memo        => $memo,
+                note        => $memo,
                 status      => $status,
                 tags        => $tags,
             };
