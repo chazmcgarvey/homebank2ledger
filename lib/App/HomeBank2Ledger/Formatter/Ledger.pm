@@ -49,7 +49,8 @@ sub format {
 
 Get formatted header. For example,
 
-    ; Converted from finances.xhb using homebank2ledger 0.001
+    ; Name: My Finances
+    ; File: path/to/finances.xhb
 
 =cut
 
@@ -61,9 +62,9 @@ sub format_header {
     if (my $name = $self->name) {
         push @out, "; Name: $name";
     }
-
-    my $file = $self->file;
-    push @out, "; Converted from ${file} using homebank2ledger ${VERSION}";
+    if (my $file = $self->file) {
+        push @out, "; File: $file";
+    }
 
     push @out, '';
 
