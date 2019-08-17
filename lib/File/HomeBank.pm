@@ -575,6 +575,10 @@ sub parse_string {
                         $attr{flags}{$name} = $flags & (1 << $shift) ? 1 : 0;
                     }
 
+                    for my $bnum (0 .. 12) {
+                        $attr{budget_amounts}[$bnum] = delete $attr{"b$bnum"} if $attr{"b$bnum"};
+                    }
+
                     push @categories, \%attr;
                 }
                 elsif ($node eq 'ope') {    # transaction
