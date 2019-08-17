@@ -4,7 +4,7 @@ homebank2ledger - A tool to convert HomeBank files to Ledger format
 
 # VERSION
 
-version 0.004
+version 0.005
 
 # SYNOPSIS
 
@@ -119,6 +119,15 @@ Enables commodity declarations.
 
 Defaults to enabled; use `--no-commodities` to disable.
 
+## --budget
+
+Enables budget transactions.
+
+Budget transactions are only supported by the Ledger format (for now). This option is silently
+ignored otherwise.
+
+Defaults to enabled; use `--no-budget` to disable.
+
 ## --opening-date DATE
 
 Specify the opening date for the "opening balances" transaction. This transaction is created (if
@@ -199,7 +208,7 @@ it's just plain text.
 # CAVEATS
 
 - I didn't intend to make this a releasable robust product, so it's lacking tests.
-- Budgets and scheduled transactions are not (yet) converted.
+- Scheduled transactions are not (yet) converted.
 - There are some minor formatting tweaks I will make (e.g. consolidate transaction tags and payees)
 
 # BUGS
