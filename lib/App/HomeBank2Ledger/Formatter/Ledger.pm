@@ -32,18 +32,28 @@ sub format {
     my $ledger = shift;
 
     my @out = (
-        $self->_format_header,
-        $self->_format_accounts($ledger),
-        $self->_format_commodities($ledger),
-        $self->_format_payees($ledger),
-        $self->_format_tags($ledger),
-        $self->_format_transactions($ledger),
+        $self->format_header,
+        $self->format_accounts($ledger),
+        $self->format_commodities($ledger),
+        $self->format_payees($ledger),
+        $self->format_tags($ledger),
+        $self->format_transactions($ledger),
     );
 
     return join($/, map { rtrim($_) } @out);
 }
 
-sub _format_header {
+=method format_header
+
+    @lines = $formatter->format_header;
+
+Get formatted header. For example,
+
+    ; Converted from finances.xhb using homebank2ledger 0.001
+
+=cut
+
+sub format_header {
     my $self = shift;
 
     my @out;
@@ -60,7 +70,19 @@ sub _format_header {
     return @out;
 }
 
-sub _format_accounts {
+=method format_accounts
+
+    @lines = $formatter->format_accounts($ledger);
+
+Get formatted accounts. For example,
+
+    account Assets:Bank:Credit Union:Savings
+    account Assets:Bank:Credit Union:Checking
+    ...
+
+=cut
+
+sub format_accounts {
     my $self   = shift;
     my $ledger = shift;
 
@@ -72,7 +94,21 @@ sub _format_accounts {
     return @out;
 }
 
-sub _format_commodities {
+=method format_commodities
+
+    @lines = $formatter->format_commodities($ledger);
+
+Get formattted commodities. For example,
+
+    commodity $
+        note US Dollar
+        format $  1,000.00
+        alias USD
+    ...
+
+=cut
+
+sub format_commodities {
     my $self   = shift;
     my $ledger = shift;
 
@@ -90,7 +126,18 @@ sub _format_commodities {
     return @out;
 }
 
-sub _format_payees {
+=method format_payees
+
+    @lines = $formatter->format_payees($ledger);
+
+Get formatted payees. For example,
+
+    payee 180 Tacos
+    ...
+
+=cut
+
+sub format_payees {
     my $self   = shift;
     my $ledger = shift;
 
@@ -102,7 +149,18 @@ sub _format_payees {
     return @out;
 }
 
-sub _format_tags {
+=method format_tags
+
+    @lines = $formatter->format_tags($ledger);
+
+Get formatted tags. For example,
+
+    tag yapc
+    ...
+
+=cut
+
+sub format_tags {
     my $self   = shift;
     my $ledger = shift;
 
@@ -114,7 +172,22 @@ sub _format_tags {
     return @out;
 }
 
-sub _format_transactions {
+=method format_transactions
+
+    @lines = $formatter->format_transactions($ledger);
+
+Get formatted transactions. For example,
+
+    2003-02-14 * Opening Balance
+        Assets:Bank:Credit Union:Savings          $  458.21
+        Assets:Bank:Credit Union:Checking         $  194.17
+        Equity:Opening Balances
+
+    ...
+
+=cut
+
+sub format_transactions {
     my $self   = shift;
     my $ledger = shift;
 

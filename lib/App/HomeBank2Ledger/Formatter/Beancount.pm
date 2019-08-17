@@ -33,18 +33,28 @@ sub format {
     my $ledger = shift;
 
     my @out = (
-        $self->_format_header,
-        $self->_format_accounts($ledger),
-        $self->_format_commodities($ledger),
-        # $self->_format_payees,
-        # $self->_format_tags,
-        $self->_format_transactions($ledger),
+        $self->format_header,
+        $self->format_accounts($ledger),
+        $self->format_commodities($ledger),
+        # $self->format_payees,
+        # $self->format_tags,
+        $self->format_transactions($ledger),
     );
 
     return join($/, map { rtrim($_) } @out);
 }
 
-sub _format_header {
+=method format_header
+
+    @lines = $formatter->format_header;
+
+Get formatted header. For example,
+
+    ; Converted from finances.xhb using homebank2ledger 0.001
+
+=cut
+
+sub format_header {
     my $self = shift;
 
     my @out;
@@ -61,7 +71,19 @@ sub _format_header {
     return @out;
 }
 
-sub _format_accounts {
+=method format_accounts
+
+    @lines = $formatter->format_accounts($ledger);
+
+Get formatted accounts. For example,
+
+    2003-02-14 open Assets:Bank:Credit-Union:Savings
+    2003-02-14 open Assets:Bank:Credit-Union:Checking
+    ...
+
+=cut
+
+sub format_accounts {
     my $self   = shift;
     my $ledger = shift;
 
@@ -79,7 +101,19 @@ sub _format_accounts {
     return @out;
 }
 
-sub _format_commodities {
+=method format_commodities
+
+    @lines = $formatter->format_commodities($ledger);
+
+Get formattted commodities. For example,
+
+    2003-02-14 commodity USD
+        name: "US Dollar"
+    ...
+
+=cut
+
+sub format_commodities {
     my $self   = shift;
     my $ledger = shift;
 
@@ -98,7 +132,22 @@ sub _format_commodities {
     return @out;
 }
 
-sub _format_transactions {
+=method format_transactions
+
+    @lines = $formatter->format_transactions($ledger);
+
+Get formatted transactions. For example,
+
+    2003-02-14 * "Opening Balance"
+        Assets:Bank:Credit-Union:Savings           458.21 USD
+        Assets:Bank:Credit-Union:Checking          194.17 USD
+        Equity:Opening-Balances
+
+    ...
+
+=cut
+
+sub format_transactions {
     my $self   = shift;
     my $ledger = shift;
 
