@@ -11,6 +11,7 @@ L<App::HomeBank2Ledger::Formatter>
 
 =cut
 
+use v5.10.1;    # defined-or
 use warnings;
 use strict;
 
@@ -244,7 +245,29 @@ sub _format_transaction {
         push @line, ($posting_status_symbol ? "  $posting_status_symbol " : '    ');
         push @line, sprintf("\%-${account_width}s", $posting->{account});
         push @line, '  ';
-        push @line, $self->_format_amount($posting->{amount}, $posting->{commodity}) if defined $posting->{amount};
+        if (defined $posting->{amount}) {
+            push @line, $self->_format_amount($posting->{amount}, $posting->{commodity});
+            if (my $price = $posting->{lot_price}) {
+                my $is_fixed = $posting->{lot_fixed};
+                my $fixed_symbol = $is_fixed ? '=' : '';
+                push @line, " {${fixed_symbol}",
+                            $self->_format_amount($price->{amount}, $price->{commodity}),
+                            '}';
+            }
+            if (my $lot_date = $posting->{lot_date}) {
+                push @line, " [$posting->{lot_date}]";
+            }
+            if (my $cost = $posting->{total_cost} // $posting->{cost}) {
+                my $is_total = defined $posting->{total_cost};
+                my $cost_symbol = $is_total ? '@@' : '@';
+                push @line, ' ', $cost_symbol, ' ',
+                            $self->_format_amount($cost->{amount}, $cost->{commodity});
+            }
+        }
+        if (my $note = $posting->{note}) {
+            $note = $self->_format_string($note);
+            push @line, "  ; $note" if $note ne $memo;
+        }
 
         push @out, join('', @line);
 
