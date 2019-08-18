@@ -16,6 +16,7 @@ use warnings;
 use strict;
 
 use App::HomeBank2Ledger::Util qw(commify rtrim);
+use Scalar::Util qw(looks_like_number);
 
 use parent 'App::HomeBank2Ledger::Formatter';
 
@@ -197,6 +198,13 @@ sub _format_transaction {
         $out[-1] .= ' '.join(' ', @tags);
     }
 
+    my $metadata = $transaction->{metadata} || {};
+    for my $key (sort keys %$metadata) {
+        my $value = looks_like_number($metadata->{$key}) ? $metadata->{$key}
+                                                         : $self->_format_string($metadata->{$key});
+        push @out, "    ; ${key}: ${value}";
+    }
+
     for my $posting (@postings) {
         my @line;
 
@@ -233,6 +241,13 @@ sub _format_transaction {
         }
 
         push @out, join('', @line);
+
+        my $metadata = $posting->{metadata} || {};
+        for my $key (sort keys %$metadata) {
+            my $value = looks_like_number($metadata->{$key}) ? $metadata->{$key}
+                                                             : $self->_format_string($metadata->{$key});
+            push @out, "      ; ${key}: ${value}";
+        }
     }
 
     push @out, '';

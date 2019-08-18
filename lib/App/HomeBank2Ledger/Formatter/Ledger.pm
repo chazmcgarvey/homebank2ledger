@@ -234,6 +234,12 @@ sub _format_transaction {
         $memo          && "  ; $memo",
     );
 
+    my $metadata = $transaction->{metadata} || {};
+    for my $key (sort keys %$metadata) {
+        my $value = $self->_format_string($metadata->{$key});
+        push @out, "    ; ${key}: ${value}";
+    }
+
     for my $posting (@postings) {
         my @line;
 
@@ -270,6 +276,12 @@ sub _format_transaction {
         }
 
         push @out, join('', @line);
+
+        my $metadata = $posting->{metadata} || {};
+        for my $key (sort keys %$metadata) {
+            my $value = $self->_format_string($metadata->{$key});
+            push @out, "      ; ${key}: ${value}";
+        }
 
         if (my $posting_payee = $posting->{payee}) {
             $posting_payee = $self->_format_string($posting_payee);
