@@ -582,8 +582,8 @@ sub parse_string {
                     push @categories, \%attr;
                 }
                 elsif ($node eq 'ope') {    # transaction
-                    $attr{paymode} = $TRANSACTION_PAYMODES{$attr{paymode} || ''} || 'unknown';
-                    $attr{status}  = $TRANSACTION_STATUSES{delete $attr{st}} || 'unknown';
+                    $attr{paymode} = $TRANSACTION_PAYMODES{$attr{paymode}   || ''} || 'unknown';
+                    $attr{status}  = $TRANSACTION_STATUSES{delete $attr{st} || ''} || 'unknown';
 
                     $attr{transfer_key}   = delete $attr{kxfer} if $attr{kxfer};
                     $attr{split_amount}   = delete $attr{samt}  if $attr{samt};
