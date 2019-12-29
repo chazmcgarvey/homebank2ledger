@@ -4,7 +4,7 @@ homebank2ledger - A tool to convert HomeBank files to Ledger format
 
 # VERSION
 
-version 0.006
+version 0.007
 
 # SYNOPSIS
 
