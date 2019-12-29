@@ -278,9 +278,13 @@ sub _format_amount {
 
     my $format = "\% .$commodity->{frac}f";
     my ($whole, $fraction) = split(/\./, sprintf($format, $amount));
+    $fraction ||= 0;
 
     # beancount doesn't support different notations
-    my $num = join('.', commify($whole), $fraction);
+    my $num = commify($whole);
+    if ($commodity->{frac}) {
+        $num .= ".$fraction";
+    }
 
     $num = "$num $commodity->{iso}";
 

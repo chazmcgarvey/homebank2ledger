@@ -319,8 +319,12 @@ sub _format_amount {
 
     my $format = "\% .$commodity->{frac}f";
     my ($whole, $fraction) = split(/\./, sprintf($format, $amount));
+    $fraction ||= 0;
 
-    my $num = join($commodity->{dchar}, commify($whole, $commodity->{gchar}), $fraction);
+    my $num = commify($whole, $commodity->{gchar});
+    if ($commodity->{frac}) {
+        $num .= $commodity->{dchar} . $fraction;
+    }
 
     my $symbol = $commodity->{symbol};
     $symbol = $self->_quote_string($symbol) if $symbol =~ /[0-9\s]/;
