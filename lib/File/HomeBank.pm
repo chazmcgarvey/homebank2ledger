@@ -152,6 +152,18 @@ sub file {
     shift->{file};
 }
 
+=method file_version
+
+    $version = $homebank->file_version;
+
+Get the file format version.
+
+=cut
+
+sub file_version {
+    shift->{homebank}{version};
+}
+
 =method title
 
     $title = $homebank->title;
@@ -226,7 +238,7 @@ sub tags {
 
     $account = $homebank->find_account_by_key($key);
 
-Find a account with the given key.
+Find an account with the given key.
 
 =cut
 
@@ -520,6 +532,7 @@ Parse a HomeBank file from a string.
 sub parse_string {
     my $str = shift or die _usage(q{parse_string($str)});
 
+    my %homebank;
     my %properties;
     my @accounts;
     my @payees;
@@ -539,7 +552,11 @@ sub parse_string {
                     $attr{$key} = _decode_xml_entities($attr{$key});
                 }
 
-                if ($node eq 'properties') {
+                if ($node eq 'homebank') {
+                    $attr{version} = delete $attr{v} if $attr{v};
+                    %homebank = %attr;
+                }
+                elsif ($node eq 'properties') {
                     $attr{currency} = delete $attr{curr} if $attr{curr};
                     %properties = %attr;
                 }
@@ -605,6 +622,7 @@ sub parse_string {
     $xml_parser->parse($str);
 
     return {
+        homebank        => \%homebank,
         properties      => \%properties,
         accounts        => \@accounts,
         payees          => \@payees,
