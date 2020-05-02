@@ -377,7 +377,7 @@ sub find_transaction_transfer_pair {
     my $self = shift;
     my $transaction = shift;
 
-    return if $transaction->{paymode} ne 'internaltransfer';
+    return if !$transaction->{dst_account};
 
     my $transfer_key = $transaction->{transfer_key};
 
@@ -397,7 +397,7 @@ sub find_transaction_transfer_pair {
     my @candidates;
 
     for my $t (@{$self->transactions}) {
-        next if $t->{paymode} ne 'internaltransfer';
+        next if !$t->{dst_account};
         next if $t->{account} != $transaction->{dst_account};
         next if $t->{dst_account} != $transaction->{account};
         next if $t->{amount} != -$transaction->{amount};
@@ -412,9 +412,9 @@ sub find_transaction_transfer_pair {
 
     # sort the candidates so we can pick the nearest one by date
     my @ordered_candidates =
-        map { $_->[1] }
+        map  { $_->[1] }
         sort { $a->[0] <=> $b->[0] }
-        map { [abs($transaction_day - _ymd_to_julian($_->{date})), $_] } @candidates;
+        map  { [abs($transaction_day - _ymd_to_julian($_->{date})), $_] } @candidates;
 
     if (my $winner = $ordered_candidates[0]) {
         my $key1 = $transfer_key || '[no key]';

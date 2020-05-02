@@ -291,7 +291,6 @@ sub convert_homebank_to_ledger {
         my $account = $homebank->find_account_by_key($transaction->{account});
         my $amount  = $transaction->{amount};
         my $status  = $STATUS_SYMBOLS{$transaction->{status} || ''} || '';
-        my $paymode = $transaction->{paymode} || ''; # internaltransfer
         my $memo    = $transaction->{wording} || '';
         my $payee   = $homebank->find_payee_by_key($transaction->{payee});
         my $tags    = _split_tags($transaction->{tags});
@@ -308,7 +307,7 @@ sub convert_homebank_to_ledger {
             tags        => $tags,
         };
 
-        if ($paymode eq 'internaltransfer') {
+        if ($transaction->{dst_account}) {  # is an internal transfer
             my $paired_transaction = $homebank->find_transaction_transfer_pair($transaction);
 
             my $dst_account = $homebank->find_account_by_key($transaction->{dst_account});
