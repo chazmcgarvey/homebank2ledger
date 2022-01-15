@@ -4,7 +4,7 @@ homebank2ledger - A tool to convert HomeBank files to Ledger format
 
 # VERSION
 
-version 0.008
+version 0.009
 
 # SYNOPSIS
 
@@ -19,7 +19,7 @@ version 0.008
 
 `homebank2ledger` converts [HomeBank](http://homebank.free.fr/) files to a format usable by
 [Ledger](https://www.ledger-cli.org/). It can also convert directly to the similar
-[Beancount](http://furius.ca/beancount/) format.
+[Beancount](https://beancount.github.io/docs/index.html) format.
 
 This software is **EXPERIMENTAL**, in early development. Its interface may change without notice.
 
