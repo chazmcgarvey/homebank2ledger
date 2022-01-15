@@ -15,7 +15,7 @@
 
 F<homebank2ledger> converts L<HomeBank|http://homebank.free.fr/> files to a format usable by
 L<Ledger|https://www.ledger-cli.org/>. It can also convert directly to the similar
-L<Beancount|http://furius.ca/beancount/> format.
+L<Beancount|https://beancount.github.io/docs/index.html> format.
 
 This software is B<EXPERIMENTAL>, in early development. Its interface may change without notice.
 

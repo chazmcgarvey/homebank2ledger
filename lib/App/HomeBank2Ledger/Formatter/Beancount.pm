@@ -3,7 +3,7 @@ package App::HomeBank2Ledger::Formatter::Beancount;
 
 =head1 DESCRIPTION
 
-This is a formatter for L<Beancount|http://furius.ca/beancount/>.
+This is a formatter for L<Beancount|https://beancount.github.io/docs/index.html>.
 
 =head1 SEE ALSO
 
