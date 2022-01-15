@@ -24,7 +24,7 @@ accounts. Examples:
 
 =for :list
 * "Assets:Bank:Chase1234"
-* "Liabilities:Credit Card:CapitalOne"
+* "Liabilities:Credit Card:Capital One"
 
 =head2 commodity
 
@@ -51,9 +51,11 @@ This is a hashref like this:
 
     {
         date        => '2019-06-12',        # required
-        payee       => 'Malcolm Reynolds',  # required
+        aux_date    => '2019-06-13',        # optional
         status      => 'cleared',           # optional; can be "cleared" or "pending"
-        memo        => 'Medical supplies',  # optional
+        code        => '1234',              # optional
+        payee       => 'Malcolm Reynolds',  # required
+        note        => 'Medical supplies',  # optional
         postings    => [                    # required
             {
                 account     => 'Some Account',  # required
@@ -69,9 +71,20 @@ This is a hashref like this:
                     frac    => 2,
                 },
                 payee       => 'Somebody',      # optional
-                memo        => 'Whatever',      # optional
+                note        => 'Whatever',      # optional
                 status      => 'pending',       # optional; can be "cleared" or "pending"
                 tags        => [qw(niska train-job)],
+                lot         => {                # optional
+                    date        => '2019-01-28',
+                    price       => {
+                        amount      => '15.00',
+                        commodity   => { ... },
+                    },
+                },
+                cost        => {                # optional
+                    amount      => '10.00',
+                    commodity   => { ... },
+                },
             },
             ...
         ],
