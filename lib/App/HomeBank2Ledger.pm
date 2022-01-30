@@ -295,6 +295,8 @@ sub convert_homebank_to_ledger {
         my $payee   = $homebank->find_payee_by_key($transaction->{payee});
         my $tags    = _split_tags($transaction->{tags});
         my $date    = $transaction->{date};
+        my $code    = $transaction->{paymode} =~ /^(?:check|epayment)$/ ? $transaction->{info}
+                                                                        : undef;
 
         my @postings;
 
@@ -392,6 +394,7 @@ sub convert_homebank_to_ledger {
         $ledger->add_transactions({
             date        => $date,
             payee       => $payee->{name},
+            code        => $code,
             memo        => $memo,
             postings    => \@postings,
         });
