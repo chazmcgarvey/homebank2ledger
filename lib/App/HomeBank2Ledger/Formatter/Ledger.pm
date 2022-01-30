@@ -25,6 +25,7 @@ my %STATUS_SYMBOLS = (
     cleared => '*',
     pending => '!',
 );
+my $SYMBOL = qr![^\s\d.,;:?\!\-+*/^&|=\<\>\[\]\(\)\{\}\@]+!;
 
 sub _croak { require Carp; Carp::croak(@_) }
 
@@ -343,6 +344,13 @@ sub _quote_string {
     return "\"$str\"";
 }
 
+sub _format_symbol {
+    my $self = shift;
+    my $str  = shift;
+    return $self->_quote_string($str) if $str !~ /^${SYMBOL}$/;
+    return $str;
+}
+
 sub _format_amount {
     my $self      = shift;
     my $amount    = shift;
@@ -357,9 +365,7 @@ sub _format_amount {
         $num .= $commodity->{dchar} . $fraction;
     }
 
-    my $symbol = $commodity->{symbol};
-    $symbol = $self->_quote_string($symbol) if $symbol =~ /[0-9\s]/;
-
+    my $symbol = $self->_format_symbol($commodity->{symbol});
     $num = $commodity->{syprf} ? "$symbol $num" : "$num $symbol";
 
     return $num;
